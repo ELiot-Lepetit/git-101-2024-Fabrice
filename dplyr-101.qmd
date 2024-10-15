@@ -255,3 +255,76 @@ white_wine |>
 white_wine |> summarise(mean(alcohol), median(alcohol), IQR(alcohol), sd(alcohol))
 ```
 
+### More complex summary functions
+Essentially `quantile()`.
+
+```{r}
+quantile(white_wine$`residual sugar`)
+```
+
+E.g, here we can see there is a long tail (to the right)
+
+
+```{r}
+quantile(white_wine$`residual sugar`, probs = seq(0,1,.1))
+```
+
+--> We see the tail even better
+
+```{r}
+mean(white_wine$`residual sugar`)
+```
+
+
+```{r}
+white_wine |> 
+  summarise(quantile(`residual sugar`))
+```
+It works but there is a message, so we use `reframe` instead: 
+```{r}
+white_wine |> 
+  reframe(quantile(`residual sugar`), 
+          mean(`residual sugar`))
+```
+
+```{r}
+sugar_stats <- white_wine |> 
+  summarise(list(quantile(`residual sugar`), 
+          mean(`residual sugar`)))
+```
+
+
+### Group by 
+```{r}
+white_wine |>
+  summarise(median(`residual sugar`), 
+            n(), 
+            .by = quality) |>
+  arrange(quality)
+```
+
+```{r}
+white_wine |>
+  summarise(median(`residual sugar`), 
+            n(), 
+            .by = alcohol) |>
+  arrange(alcohol)
+```
+Not very pertinent, so we will arrange in two groups "high alcool" (ha) and "low alcohol"
+
+```{r}
+white_wine |>
+  mutate(ha = alcohol>=12.5) |>
+  summarise(median(`residual sugar`), 
+            n(), 
+            .by = ha)
+```
+
+More advanced cut: 
+```{r}
+white_wine |>
+  mutate(alcohol_class = cut(alcohol, breaks=c(7, 9, 10, 12, 13, 15))) |>
+  summarise(median(`residual sugar`), 
+            n(), 
+            .by = alcohol_class)
+```
