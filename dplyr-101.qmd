@@ -328,3 +328,41 @@ white_wine |>
             n(), 
             .by = alcohol_class)
 ```
+
+
+```{r}
+white_wine |>
+  mutate(alcohol_class = cut(alcohol, breaks=c(7, 9, 10, 12, 13, 15)), 
+         ordered_result = TRUE) |>
+ggplot(aes(x = alcohol_class, fill=quality)) + geom_bar(position = "fill")
+```
+
+```{r}
+alcohol_quantiles <- white_wine |> 
+  pull(alcohol) |>
+  quantile(probs = seq(0,1,.2))
+alcohol_quantiles
+```
+
+```{r}
+#We want to make sure the 0% value is excluded
+alcohol_quantiles[1] <- alcohol_quantiles[1] - 1
+alcohol_quantiles
+```
+
+```{r}
+white_wine |>
+  mutate(alcohol_class = cut(alcohol, breaks=alcohol_quantiles), 
+         ordered_result = TRUE) |>
+ggplot(aes(x = alcohol_class)) + geom_bar()
+```
+
+```{r}
+white_wine |>
+  mutate(alcohol_class = cut(alcohol, breaks=alcohol_quantiles), 
+         ordered_result = TRUE) |>
+ggplot(aes(x = alcohol_class, fill = quality)) + geom_bar(position = "fill")
+```
+
+
+```
