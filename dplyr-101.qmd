@@ -412,3 +412,69 @@ white_wine |>
 ```
 
 
+
+### `group_by()`
+
+These two methods are equivalent: 
+```{r}
+white_wine |>
+  group_by(quality) |>
+  summarise(mean(`citric acid`))
+```
+
+```{r}
+white_wine |>
+  summarise(mean(`citric acid`), .by=quality)
+```
+
+
+```{r}
+diamonds |>
+  group_by(cut) |>
+  summarise(median(price))
+```
+
+```{r}
+diamonds |>
+  group_by(cut, clarity)
+```
+
+
+```{r}
+diamonds |>
+  group_by(cut, clarity) |>
+  summarise(median(price), .groups = "drop_last")
+```
+```{r}
+diamonds |>
+  summarise(median(price), .by=c(cut,clarity))
+
+## It is the same but, this time, it is not grouped
+```
+
+```{r}
+diamonds |>
+  group_by(cut, clarity) |>
+  summarise(price_mc = median(price), .groups = "drop_last") |>
+  summarise(mean(price_mc))
+```
+
+
+```{r}
+diamonds |>
+  group_by(cut, color) |>
+  summarise(N=n(), .groups = "drop_last") |>
+  summarise(sum(N))
+```
+
+
+
+```{r}
+diamonds |>
+  group_by(cut, color) |>
+  summarise(N=n(), .groups = "drop_last") |>
+  mutate(prob = N/sum(N)) |>
+  ungroup()
+```
+
+
